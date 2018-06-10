@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #wrapper {
+        position: relative;
+      }
+      .number {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+      }
+      .prime {
+        border-radius: 0px;
+        background-color: #2196F3;
+      }
+      .notprime {
+        background-color: #333333;
+      }
+      .first {
+        background-color: red;
+      }
+    </style>
+    <title>ulamSpiral-0</title>
+  </head>
+  <body>
+    <div id="wrapper"></div>
+    <script>
+     var size = 5;
+     var run = 10000;
+     var dir = 0; // 0 = right, 1 = up, 2 = left, 3 = down
+    
+      // Returns TRUE if `n` is a prime
+      var isPrime = function (n) {
+        var i, l;
+        // 1 is not a prime
+        if (n === 1) {
+          return false;
+        }
+        // 2 is a prime - but also an even number
+        if (n === 2) {
+          return true;
+        }
+        // Even numbers greater than 2 are not primes
+        if (n % 2 === 0) {
+          return false;
+        }
+        // Checking for divisors
+        for (i = 3, l = Math.sqrt(n); i <= l; i += 2) {
+          if (n % i === 0) {
+            return false;
+          }
+        }
+        // If no divisors was found we have a prime
+        return true;
+      };
+
+      // Append an element to the DOM
+      var appendNum = (function () {
+        var doc = document;
+        var wrapper = document.getElementById("wrapper");
+        var first = true;
+        return function (num, highlight, x, y) {
+          var div = doc.createElement("div");
+          var className = "number";
+          var titleName = num;
+          className += highlight ? " prime" : " notprime";
+          className += first ? " first" : "";
+          first = false;
+          div.className = className;
+          div.title = titleName;
+          div.style.left = x + "px";
+          div.style.top = y + "px";
+          //div.appendChild(doc.createTextNode(i));
+          wrapper.appendChild(div);
+        };
+      } ());
+      
+      // Get the x and y coordinates of the center in output browser's window
+      var offsetX, offsetY;
+      if (self.innerHeight) {
+        offsetX = self.innerWidth;
+        offsetY = self.innerHeight;
+      } else if (document.documentElement && document.documentElement.clientHeight) {
+        offsetX = document.documentElement.clientWidth;
+        offsetY = document.documentElement.clientHeight;
+      } else if (document.body) {
+        offsetX = document.body.clientWidth;
+        offsetY = document.body.clientHeight;
+      }
+ 
+      // Position
+      offsetX = offsetX / 2;
+      offsetY = offsetY / 2;
+      
+      var limit = 1; // Amount to print before changing direction
+      var counter = 0; // How many printed in the current directio
+      var turns = 0; // Counter for turns taken, every second; limit++
+
+      for (var i = 1; i < run + 1; i++) {
+        appendNum(i, isPrime(i), offsetX, offsetY);
+        switch (dir) {
+          case 0 :
+            offsetX += size;
+          break;
+          case 1 :
+            offsetY -= size;
+          break;
+          case 2 :
+            offsetX -= size;
+          break;
+          case 3 :
+            offsetY += size;
+          break;
+        }
+        counter++;
+        if (counter >= limit) {
+          counter = 0;
+          turns = (turns + 1) % 2;
+          dir = (dir + 1) % 4;
+          if (turns === 0) {
+            limit++;
+          }
+        }
+      }
+      
+      var classes = document.getElementsByClassName("number");
+      for(i = 0; i<classes.length; i++) {
+        classes[i].style.width = size + "px";
+        classes[i].style.height = size + "px";
+      }
+    </script>
+  </body>
+</html>
